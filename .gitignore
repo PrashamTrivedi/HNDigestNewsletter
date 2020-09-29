@@ -1,0 +1,4 @@
+**/node_modules/*
+**/dst/*
+**/testData/*
+**/.DS_Store
