@@ -1,0 +1,89 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "create-zip",
+            "type": "shell",
+            "command": "zip -r ${input:FUNCTION}.zip ${input:FUNCTION}.js && mv ${input:FUNCTION}.zip ${workspaceFolder}/backend/zips/${input:FUNCTION}.zip",
+            "options": {
+                "cwd": "${workspaceFolder}/backend/dst"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "create-function",
+            "type": "shell",
+            "command": "aws lambda --region ${input:REGION} --profile ${input:PROFILE_NAME} create-function --function-name ${input:FUNCTION} --runtime nodejs12.x --role ${input:ROLE_ARN} --handler ${input:HANDLER} --timeout 300 --zip-file fileb://backend/zips/${input:FUNCTION}.zip",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "update-function",
+            "type": "shell",
+            "command": "aws lambda --region ${input:REGION} --profile ${input:PROFILE_NAME} update-function-code --publish --function-name ${input:FUNCTION} --zip-file fileb://backend/zips/${input:FUNCTION}.zip",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+    ],
+    "inputs": [
+        {
+            "id": "HANDLER",
+            "description": "Your lambda handler",
+            "type": "promptString"
+        },
+        {
+            "id": "PROFILE_NAME",
+            "description": "Your profile name",
+            "default": "default",
+            "type": "promptString"
+        },
+        {
+            "id": "REGION",
+            "description": "Your profile region",
+            "default": "ap-south-1",
+            "type": "promptString"
+        },
+        {
+            "id": "ROLE_ARN",
+            "description": "Input Your AWS Role ARN",
+            "type": "promptString"
+        },
+        {
+            "id": "FUNCTION",
+            "default": "OddEven",
+            "description": "Input Function Name",
+            "type": "promptString"
+        },
+        {
+            "id": "ALIAS",
+            "description": "Name of your AWS Alias",
+            "type": "promptString"
+        },
+        {
+            "id": "VERSION",
+            "description": "Version of AWS Lambda",
+            "type": "promptString"
+        }
+    ]
+}
