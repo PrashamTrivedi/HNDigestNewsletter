@@ -1,21 +1,32 @@
 import https from 'https'
+import AWS from 'aws-sdk'
 import fs from 'fs'
+import {SendMessageRequest} from 'aws-sdk/clients/sqs'
+
+AWS.config.region = 'ap-south-1'
+const sqs = new AWS.SQS()
 
 
 export const getFirebaseData = async (event: any) => {
     try {
         console.log(event)
         let story = ''
+        let type = ''
         if (!event) {
             story = 'topstories'
+            type = 'Top Stories'
         } else if (event.type === 'ask') {
             story = 'askstories'
+            type = 'Ask HN'
         } else if (event.type === 'show') {
             story = 'showstories'
+            type = 'Show HN'
         } else if (event.type === 'job') {
             story = 'jobstories'
+            type = 'Jobs'
         } else {
             story = 'topstories'
+            type = 'Top Stories'
         }
         const askStoriesData = await getData(`https://hacker-news.firebaseio.com/v0/${story}.json`)
         // console.log(askStoriesData)
@@ -158,11 +169,20 @@ export const getFirebaseData = async (event: any) => {
             </body>
             </html>`
 
-        if (!fs.existsSync('testData')) {
-            fs.mkdirSync('testData')
+        console.log(process.env.NODE_ENV)
+        if (process.env.NODE_ENV === 'PROD') {
+            const messageBody = JSON.stringify({html: htmlData, type})
+            const params: SendMessageRequest = {
+                QueueUrl: process.env.EMAIL_SENDER_URL || '', MessageBody: messageBody
+            }
+            await sqs.sendMessage(params).promise()
+        } else {
+            if (!fs.existsSync('testData')) {
+                fs.mkdirSync('testData')
+            }
+            fs.writeFileSync('./testData/fbData.html', htmlData)
+            console.log(JSON.stringify(stories))
         }
-        fs.writeFileSync('./testData/fbData.html', htmlData)
-        console.log(JSON.stringify(stories))
     } catch (error) {
         console.log(error)
     }
