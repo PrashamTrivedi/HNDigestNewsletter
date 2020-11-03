@@ -12,10 +12,7 @@ export const getFirebaseData = async (event: any) => {
         console.log(event)
         let story = ''
         let type = ''
-        if (!event) {
-            story = 'topstories'
-            type = 'Top Stories'
-        } else if (event.type === 'ask') {
+        if (event.type === 'ask') {
             story = 'askstories'
             type = 'Ask HN'
         } else if (event.type === 'show') {
@@ -35,7 +32,8 @@ export const getFirebaseData = async (event: any) => {
         for await (const storyId of askStoriesData.slice(0, 10)) {
 
             const storyData = await getData(`https://hacker-news.firebaseio.com/v0/item/${storyId}.json?print=pretty`)
-            const date = new Date()
+            const date = new Date(1970, 0, 1)
+
             date.setSeconds(storyData.time)
             storyData.time = date.toISOString().replace('T', ' ').replace('Z', '')
             if (storyData.kids) {
@@ -45,7 +43,7 @@ export const getFirebaseData = async (event: any) => {
 
                     const kidData = getData(`https://hacker-news.firebaseio.com/v0/item/${kidId}.json?print=pretty`).then(kid => {
                         if (kid && !kid.deleted && kid.time) {
-                            const kidDate = new Date()
+                            const kidDate = new Date(1970, 0, 1)
                             kidDate.setSeconds(kid.time)
                             kid.time = kidDate.toISOString().replace('T', ' ').replace('Z', '')
                             return kid
