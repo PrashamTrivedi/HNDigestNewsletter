@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 	"pht/hndata"
@@ -10,7 +11,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/endPoints"
+	"github.com/aws/aws-sdk-go/aws/endpoints"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 )
@@ -21,18 +22,18 @@ type LambdaEvent struct {
 }
 
 func getFirebaseData(ctx context.Context, event LambdaEvent) {
-	fmt.Prinln(ctx)
+	fmt.Println(ctx)
 	htmlData, storyType := hndata.FetchHackernewsData(event.storyType)
 
 	if htmlData != "" {
 		sess := session.Must(session.NewSession(&aws.Config{
-			Region: aws.String(endPoints.ApSouth1RegionID),
+			Region: aws.String(endpoints.ApSouth1RegionID),
 		}))
 		sqsQueue := sqs.New(sess)
 
 		jsonBody, marshalError := json.Marshal(struct {
-			html     string
-			typeData string
+			HTML     string `json:"html"`
+			TypeData string `json:"type"`
 		}{htmlData, storyType})
 		if marshalError != nil {
 			panic(marshalError)
@@ -40,8 +41,8 @@ func getFirebaseData(ctx context.Context, event LambdaEvent) {
 		message := string(jsonBody)
 		emailSenderURL := os.Getenv("EMAIL_SENDER_URL")
 		sendMessageData := sqs.SendMessageInput{
-			MessageBody: message,
-			QueueUrl:    emailSenderURL,
+			MessageBody: &message,
+			QueueUrl:    &emailSenderURL,
 		}
 		sqsQueue.SendMessage(&sendMessageData)
 	}
@@ -50,7 +51,16 @@ func getFirebaseData(ctx context.Context, event LambdaEvent) {
 
 func main() {
 
-	lambda.Start()
+	env := os.Getenv("ENV")
+	if env == "PROD" {
+		lambda.Start(getFirebaseData)
+	} else {
+		storyType := flag.String("storyType", "top", "Type of hn stories")
+		flag.Parse()
+		fmt.Println(*storyType)
+
+		hndata.FetchHackernewsData(*storyType)
+	}
 	// htmlFile.Write([]byte(htmlTemplate))
 
 }

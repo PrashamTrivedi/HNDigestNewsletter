@@ -3,3 +3,5 @@
 **/testData/*
 **/.DS_Store
 /backend/zips/**
+**/.idea/**
+**/**/workspace.xml

@@ -11,13 +11,13 @@ type APIResponse struct {
 
 //Story represent a story data
 type Story struct {
-	URL        string
-	Title      string
-	By         string
-	Text       string
-	Time       int64
-	TimeString string
-	ID         int
+	URL        string `json:"url"`
+	Title      string `json:"title"`
+	By         string `json:"by"`
+	Text       string `json:"text"`
+	Time       int64 `json:"time"`
+	TimeString string `json:"time_string"`
+	ID         int `json:"id"`
 	Kids       []int
 	KidData    []Story
 }
