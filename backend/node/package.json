@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/aws-sdk": "2.7.0",
     "@types/node": "16.11.56",
-    "@types/source-map-support": "0.5.4",
+    "@types/source-map-support": "0.5.5",
     "aws-sdk": "2.1201.0",
     "source-map-support": "0.5.21"
   }
