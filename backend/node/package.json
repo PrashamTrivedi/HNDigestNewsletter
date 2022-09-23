@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/aws-sdk": "2.7.0",
-    "@types/node": "16.11.59",
+    "@types/node": "16.11.60",
     "@types/source-map-support": "0.5.6",
     "aws-sdk": "2.1222.0",
     "source-map-support": "0.5.21"
