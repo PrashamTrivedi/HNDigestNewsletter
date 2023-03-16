@@ -14,7 +14,7 @@
     "@types/aws-sdk": "2.7.0",
     "@types/node": "18.15.3",
     "@types/source-map-support": "0.5.6",
-    "aws-sdk": "2.1335.0",
+    "aws-sdk": "2.1336.0",
     "source-map-support": "0.5.21"
   }
 }
