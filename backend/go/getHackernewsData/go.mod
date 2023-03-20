@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/aws/aws-lambda-go v1.38.0
-	github.com/aws/aws-sdk-go v1.44.222
+	github.com/aws/aws-sdk-go v1.44.225
 	pht/hndata v0.0.0-00010101000000-000000000000
 )
 
